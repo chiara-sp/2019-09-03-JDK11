@@ -15,10 +15,16 @@ public class Model {
 	FoodDao dao;
 	SimpleWeightedGraph<String, DefaultWeightedEdge> grafo;
 	List<String> vertici;
+	List<String> soluzione;
+	
+	String partenza;
+	double pesoTot;
+
 	
 	public Model() {
 		dao= new FoodDao();
 		vertici= new LinkedList<>();
+		
 	}
 	
 	public void creaGrafo(int calories) {
@@ -54,5 +60,45 @@ public class Model {
 			vicini.add(new Vicino(s, (int)grafo.getEdgeWeight(grafo.getEdge(s, portion))));
 		}
 		return vicini;
+	}
+	public List<String> doRicorsione(String partenza, int N) {
+		this.partenza=partenza;
+		soluzione= new LinkedList<>();
+		LinkedList<String> parziale= new LinkedList<>();
+		parziale.add(partenza);
+		pesoTot=0;
+		
+		cerca(0, N, parziale, 0);
+		
+		return soluzione;
+	}
+
+	private void cerca(int livello, int n, LinkedList<String> parziale, int pesoP) {
+		
+		//condizione di terminazione
+		if(livello>n) {
+			return;
+		}
+		if(livello==n ) {
+			if(pesoP>pesoTot || pesoTot==0) {
+				soluzione= new LinkedList<>(parziale);
+				pesoTot=pesoP;
+			}
+			return;
+		}
+		String ultimo= parziale.get(parziale.size()-1);
+		for(String s: Graphs.neighborListOf(grafo, ultimo)) {
+			
+			if(!parziale.contains(s)) {
+				pesoP+= (int)grafo.getEdgeWeight(grafo.getEdge(s, ultimo));
+				parziale.add(s);
+				cerca(livello+1,n, parziale,pesoP);
+				parziale.remove(s);
+			}
+		}
+		
+	}
+	public double calcolaPeso() {
+	return this.pesoTot;
 	}
 }

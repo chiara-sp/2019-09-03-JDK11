@@ -5,6 +5,7 @@
 package it.polito.tdp.food;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import it.polito.tdp.food.model.Model;
 import it.polito.tdp.food.model.Vicino;
@@ -49,14 +50,37 @@ public class FoodController {
     @FXML
     void doCammino(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Cerco cammino peso massimo...");
+    	if(!model.grafoCreato())
+    		txtResult.appendText("creare orima il grafo");
+    	String portion= this.boxPorzioni.getValue();
+    	if(portion==null) {
+    		txtResult.appendText("selezionare cibo");
+    		return;
+    	}
+    	int N;
+    	try {
+    		N= Integer.parseInt(txtPassi.getText());
+    	}catch(NumberFormatException e) {
+    		txtResult.appendText("iserire un numero di passi");
+    		return;
+    	}
+    	
+    	txtResult.appendText("Cerco cammino peso massimo...\n");
+    	List<String> soluzione= model.doRicorsione(portion, N);
+    	txtResult.appendText("Trovato cammino con "+ model.calcolaPeso()+ " di peso\n");
+    	for(String v: soluzione) {
+    		txtResult.appendText(v+ "\n");
+    	}
     }
 
     @FXML
     void doCorrelate(ActionEvent event) {
     	txtResult.clear();
-    	if(!model.grafoCreato())
-    		txtResult.appendText("creare orima il grafo");
+    	if(!model.grafoCreato()) {
+    		txtResult.appendText("creare prima il grafo");
+    		return;
+    	}
+    		
     	String portion= this.boxPorzioni.getValue();
     	if(portion==null) {
     		txtResult.appendText("selezionare cibo");
