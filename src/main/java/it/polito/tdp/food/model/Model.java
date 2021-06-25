@@ -94,6 +94,7 @@ public class Model {
 				parziale.add(s);
 				cerca(livello+1,n, parziale,pesoP);
 				parziale.remove(s);
+				pesoP-=(int)grafo.getEdgeWeight(grafo.getEdge(s, ultimo));
 			}
 		}
 		
